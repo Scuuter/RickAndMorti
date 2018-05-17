@@ -4,19 +4,7 @@ var characterSuffix = "character/";
 var locations = [];
 var pages = -1;
 var charactersAmount = 0;
-var locationsReady = false;
-var parametersReady = false;
 var field = document.querySelector("#field");
-var baseRect;
-
-function Planet(id, name, type, dimension, people) {
-    this.id = id;
-    this.name = name;
-    this.type = type;
-    this.dimension = dimension;
-    this.people = people;
-}
-
 
 function request(url, func) {
     var req = new XMLHttpRequest();
@@ -77,10 +65,8 @@ function initParameters() {
              }
          }
     });
- //   console.log(minSquare);
     charAmountMap.forEach(function (element, index) {
         lines[index] = element*index/minSquare;
-//        console.log(element);
     });
     lines[0] = 0.5*lines[1];
 
@@ -89,18 +75,30 @@ function initParameters() {
     lines.forEach(function (element, index) {
         startX[index] = sum;
         sum += element;
- //       console.log(element);
     });
     minX = 100/sum;
     startX.forEach(function (element, index){
         startX[index] = element*minX;
         lines[index]*= minX;
-//        console.log(element);
     });
     locations.forEach(function (element) {
         draw(element);
     });
 }
+
+
+function mouseOver(event){
+    var text = event.target;
+    var id = text.id.substring(0, text.id.length - 3);
+    document.getElementById(id + "box").setAttribute("fill", "red");
+}
+
+function mouseOut(event){
+    var text = event.target;
+    var id = text.id.substring(0, text.id.length - 3);
+    document.getElementById(id + "box").setAttribute("fill", "green");
+}
+
 
 function draw(planet) { // planet = locations[i]
     var x = startX[planet.residents.length];
@@ -110,47 +108,69 @@ function draw(planet) { // planet = locations[i]
         counters[planet.residents.length] = 0;
     var y = counters[planet.residents.length]*height;
     counters[planet.residents.length]++;
+    var id = planet.id.toString();
+
+    var group = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    group.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+    group.setAttribute("version", "1.1");
+    group.setAttribute("viewBox", "0 0 1 1");
+    group.setAttribute("preserveAspectRatio", "none");
+    group.setAttribute("id", id);
+    group.setAttribute("x", x + "%");
+    group.setAttribute("y", y + "%");
+    group.setAttribute("width", width +"%");
+    group.setAttribute("height", height + "%");
+    group.addEventListener("mouseover", mouseOver);
+    group.addEventListener("mouseout", mouseOut);
+
 
     var box = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-    box.setAttribute("x", x + "%");
-    box.setAttribute("y", y + "%");
-    box.setAttribute("width", width +"%");
-    box.setAttribute("height", height + "%");
+    box.setAttribute("id", id+"box");
+    box.setAttribute("x", 0);
+    box.setAttribute("y", 0);
+    box.setAttribute("width", 100 +"%");
+    box.setAttribute("height", 100 + "%");
     box.setAttribute("fill", "green");
     box.setAttribute("stroke", "yellow");
-    box.setAttribute("stroke-width", width*0.009 + "%");
+    box.setAttribute("stroke-width", 1.5 + "%");
+    console.log("kek");
+ //   box.addEventListener("mouseover", rectEvent);
+   // box.addEventLis
 
     var text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    text.setAttribute("id", id+"txt");
     text.textContent = planet.residents.length;
     text.setAttribute("fill", "white");
-    text.setAttribute("x", x + 0.1*width + "%");
-    text.setAttribute("y", y + 0.3*height + "%");
 
+ //   text.addEventListener("mouseover", textEvent);
 
-    var fontSize = 0.01*height;
-    if (width * 3 < height) {
-        fontSize = 0.03 * width;
-        text.setAttribute("y", y + 0.09*height+ "%");
+    var tY = 8;
+    var fontSize = 0.5;
+    if (charAmountMap[planet.residents.length] > 1){
+        fontSize *=1.5;
+        tY*= 2;
+    }
+    if (charAmountMap[planet.residents.length] > 3){
+        fontSize *=2;
+        tY*= 2;
+    }
+    if (charAmountMap[planet.residents.length] > 10){
+        fontSize *=2;
+        tY *= 1.3;
     }
 
-    if (planet.residents.length === 0){
-        fontSize *= 1.2;                // without it 0 are not printed
-    }
-    text.setAttribute("font-size", fontSize + "%");
- //   text.setAttribute("length", 0.9*width + "%");
+    text.setAttribute("x", 10 + "%");
+    text.setAttribute("y", tY + "%");
+    text.textLength.baseVal.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PERCENTAGE, 30);
+    text.setAttribute("lengthAdjust", "spacingAndGlyphs");
 
-    field.appendChild(box);
-    field.appendChild(text);
+//    text.setAttribute("font-size", fontSize + "%");
+    text.setAttribute("font-family", "Arial");
 
+    group.appendChild(box);
+    group.appendChild(text);
+
+    field.appendChild(group);
 }
 
 locationsRequest();
-
-
-/*var box = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-        box.setAttribute("x", "50%");
-        box.setAttribute("y", "30%");
-        box.setAttribute("width", "20%");
-        box.setAttribute("height", "10%");
-        box.setAttribute("fill", "blue");
-        field.appendChild(box);*/
