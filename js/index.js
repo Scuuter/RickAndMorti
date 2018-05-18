@@ -99,6 +99,10 @@ function mouseOut(event){
     document.getElementById(id + "box").setAttribute("fill", "green");
 }
 
+function putTitleElement(key, val){
+    return key + ": " + val + "\n";
+}
+
 
 function draw(planet) { // planet = locations[i]
     var x = startX[planet.residents.length];
@@ -161,12 +165,16 @@ function draw(planet) { // planet = locations[i]
 
     text.setAttribute("x", 10 + "%");
     text.setAttribute("y", tY + "%");
-    text.textLength.baseVal.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PERCENTAGE, 30);
+    text.textLength.baseVal.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PERCENTAGE, 40);
     text.setAttribute("lengthAdjust", "spacingAndGlyphs");
-
-//    text.setAttribute("font-size", fontSize + "%");
+    text.setAttribute("font-size", fontSize + "%");
     text.setAttribute("font-family", "Arial");
 
+    var title = document.createElementNS("http://www.w3.org/2000/svg", "title");
+    title.textContent = putTitleElement("id", id) + putTitleElement("name", planet.name)
+    + putTitleElement("type", planet.type) + putTitleElement("dimension", planet.dimension);
+
+    group.appendChild(title);
     group.appendChild(box);
     group.appendChild(text);
 
