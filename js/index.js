@@ -137,17 +137,12 @@ function draw(planet) { // planet = locations[i]
     box.setAttribute("fill", "green");
     box.setAttribute("stroke", "yellow");
     box.setAttribute("stroke-width", 1.5 + "%");
-    console.log("kek");
- //   box.addEventListener("mouseover", rectEvent);
-   // box.addEventLis
 
     var text = document.createElementNS("http://www.w3.org/2000/svg", "text");
     text.setAttribute("id", id+"txt");
     text.textContent = planet.residents.length;
     text.setAttribute("fill", "white");
-
- //   text.addEventListener("mouseover", textEvent);
-
+    
     var tY = 8;
     var fontSize = 0.5;
     if (charAmountMap[planet.residents.length] > 1){
